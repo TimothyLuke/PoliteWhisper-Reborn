@@ -1,0 +1,8 @@
+## Interface: 70000
+## Title: Polite Whisper Reborn
+## Notes: Whisper players and ask them to join your group.
+## Author: TimothyLuke Original $Author: I.odine ment. Shen|hafaliel $
+## Version: 1
+## X-Category: Miscellaneous
+## SavedVariablesPerCharacter: PoliteWhisper_Options, PoliteWhisper_DoNotInvite, PoliteWhisper_Friends
+PoliteWhisper.xml
