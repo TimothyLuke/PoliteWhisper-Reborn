@@ -25,7 +25,9 @@ function PoliteWhisper_EnglishClasses()
 		PW_D_SHAMAN             = "Shaman";
 		PW_D_WARLOCK            = "Warlock";
 		PW_D_WARRIOR            = "Warrior";
-		PW_D_DEATHKNIGHT		= "Death Knight"
+		PW_D_DEATHKNIGHT		    = "Death Knight"
+		PW_D_MONK		    				= "Monk"
+		PW_D_DEMONHUNTER		    = "Demon Hunter"
 end
 function PoliteWhisper_EnglishUI()
 		PW_TITLE              = "Polite Whisper Wrath Extended";
@@ -158,6 +160,11 @@ function PoliteWhisper_EnglishWhispers()
 				{"DPS", "DPS"}};
 		PW_SPECIALIZE[PW_DEATHKNIGHT] = {{"DK", " Death Knight"}, {"Tank", " tank"},
 				{"DPS", "DPS"}};
+		PW_SPECIALIZE[PW_MONK] = {{"Monk", " monk"}, {"Tank", " tank"},
+			  {"Healer", " healer"}, {"DPS", "DPS"}};
+		PW_SPECIALIZE[PW_DEMONHUNTER] = {{"DH", " Demon Hunter"}, {"Tank", " tank"},
+				{"DPS", "DPS"}};
+
 		PW_SPECIALIZE_OTHER_PREPEND = "a ";
 		PW_SPECIALIZE_OTHER_APPEND = "";
 
@@ -267,6 +274,8 @@ function PoliteWhisper_CopyClasses()
 		PW_WARLOCK            = PW_D_WARLOCK;
 		PW_WARRIOR            = PW_D_WARRIOR;
 		PW_DEATHKNIGHT        = PW_D_DEATHKNIGHT;
+		PW_MONK               = PW_D_MONK;
+		PW_DEMONHUNTER        = PW_D_DEMONHUNTER;
 end
 
 if (GetLocale() == "deDE")

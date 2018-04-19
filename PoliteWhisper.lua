@@ -65,7 +65,7 @@ function PoliteWhisper_ResetAll()
 end
 
 function PoliteWhisper_UpdateHeroicCheckbox()
-	if (UnitLevel("player") < 80) then
+	if (UnitLevel("player") < 110) then
 		PoliteWhisper_HeroicEnable:Disable();
 		PoliteWhisper_HeroicEnable:Hide();
 		PoliteWhisper_FinderHC:Hide();
@@ -77,13 +77,13 @@ function PoliteWhisper_UpdateLevels()
 				L = UnitLevel("player");
 				X = L - 4;
 				if (X < 1) then X = 1; end
-				if (PoliteWhisper_HeroicEnable:GetChecked()) then X = 80; end
+				if (PoliteWhisper_HeroicEnable:GetChecked()) then X = 110; end
 				PoliteWhisper_MinLevel:SetText(X);
 
 				-- Set Max to be 4 levels above player
 				X = L + 4;
-				if (X > 80) then X = 80; end
-				if (PoliteWhisper_HeroicEnable:GetChecked()) then X = 80; end
+				if (X > 110) then X = 110; end
+				if (PoliteWhisper_HeroicEnable:GetChecked()) then X = 110; end
 				PoliteWhisper_MaxLevel:SetText(X);
 end
 
@@ -205,6 +205,8 @@ function PoliteWhisper_OnLoad()
 		T[PW_WARLOCK] = PoliteWhisper_Warlock;
 		T[PW_WARRIOR] = PoliteWhisper_Warrior;
 		T[PW_DEATHKNIGHT] = PoliteWhisper_Deathknight;
+		T[PW_MONK] = PoliteWhisper_Monk;
+		T[PW_DEMONHUNTER] = PoliteWhisper_DemonHunter;
 		PoliteWhisper_ClassEnables = T;
 
 		-- Locate the scrolling items (and hide the buttons)
@@ -336,6 +338,13 @@ function PoliteWhisper_TranslateClass(class)
 			if (class == PW_DEATHKNIGHT) then
 				tclass = PW_D_DEATHKNIGHT;
 			end
+			if (class == PW_MONK) then
+				tclass = PW_D_MONK;
+			end
+			if (class == PW_DEMONHUNTER) then
+				tclass = PW_D_DEMONHUNTER;
+			end
+
 			return tclass;
 end
 
@@ -346,14 +355,14 @@ function PoliteWhisper_ReplaceTags(message,targetuser)
 		if (targetuser ~= "$TestUser") then
 			--$P = name of target player being whispered
 			gsubtable["$P"] = targetuser;
-		
+
 			--$L = level of target player being whispered
 			gsubtable["$L"] =	PoliteWhisper_Users[targetuser].Level;
 
 			--$C = class of target player being whispered
 			local class = PoliteWhisper_Users[targetuser].Class;
 			gsubtable["$C"] =	PoliteWhisper_TranslateClass(class);
-			
+
 
 			--$D = name of destination zone/instance
 			gsubtable["$D"] = PoliteWhisper_Dungeon:GetText();
@@ -371,18 +380,18 @@ function PoliteWhisper_ReplaceTags(message,targetuser)
 					Role = PW_SPECIALIZE_OTHER_PREPEND..PoliteWhisper_TranslateClass(class):lower()..PW_SPECIALIZE_OTHER_APPEND;
 			end
 			gsubtable["$R"] = Role;
-	
+
 			--$N = number of players in group
 			gsubtable["$N"] = GetNumPartyMembers()+1;
-	
+
 			--$B = name of group leader (boss)
-			if (GetNumPartyMembers() > 0) then 
+			if (GetNumPartyMembers() > 0) then
 					gsubtable["$B"] = UnitName("party" .. GetPartyLeaderIndex());
 			else
 					--Group hasn't formed yet. Use name of player instead.
 					gsubtable["$B"] = UnitName("player");
 			end
-	
+
 			--$G = group makeup (classes and levels))
 			local GroupMakeup = string.format(PW_PARTY_MAKEUP2, PoliteWhisper_TranslateClass(UnitClass("player")), UnitLevel("player"));
 			for i = 1, GetNumPartyMembers() do
@@ -395,9 +404,9 @@ function PoliteWhisper_ReplaceTags(message,targetuser)
 			gsubtable["$L"] =	80;
 			gsubtable["$C"] =	PW_D_HUNTER;
 			gsubtable["$D"] = PW_DUNGEONS[24][1];
-			gsubtable["$R"] = PW_SPECIALIZE[PW_HUNTER][2][2];		
+			gsubtable["$R"] = PW_SPECIALIZE[PW_HUNTER][2][2];
 			gsubtable["$N"] = GetNumPartyMembers()+1;
-			if (GetNumPartyMembers() > 0) then 
+			if (GetNumPartyMembers() > 0) then
 					gsubtable["$B"] = UnitName("party" .. GetPartyLeaderIndex());
 			else
 					--Group hasn't formed yet. Use name of player instead.
@@ -411,7 +420,7 @@ function PoliteWhisper_ReplaceTags(message,targetuser)
 			gsubtable["$G"] = GroupMakeup;
 
 		end
-	
+
 		--Perform the substitution and return the finished message
 		return string.gsub(message,"($%w)", gsubtable);
 end
@@ -677,7 +686,7 @@ function PoliteWhisper_ResetCustomWhispers()
 		PoliteWhisper_Options.INVITE_WARNING = PW_INVITE_WARNING;
 		PoliteWhisper_Options.SLOT_FULL = PW_SLOT_FULL;
 		PoliteWhisper_Options.PARTY_FULL = PW_PARTY_FULL;
-		
+
 		PoliteWhisper_Custom1:SetText(PoliteWhisper_Options.INVITATION_WHISPER);
 		PoliteWhisper_Custom2:SetText(PoliteWhisper_Options.SPECIAL_INVITE);
 		PoliteWhisper_Custom3:SetText(PoliteWhisper_Options.APOLOGY);
@@ -771,6 +780,10 @@ function PoliteWhisper_ShowItem(i, Name, Items)
 		elseif 	(Items.Class == "Rogue")then
 			Ctrls.Class:SetTextColor(1.00, 0.96, 0.41, 1);
 		elseif 	(Items.Class == "Warrior")then
+			Ctrls.Class:SetTextColor(0.78, 0.61, 0.43, 1);
+		elseif 	(Items.Class == "Monk")then
+			Ctrls.Class:SetTextColor(0.78, 0.61, 0.43, 1);
+		elseif 	(Items.Class == "Demon Hunter")then
 			Ctrls.Class:SetTextColor(0.78, 0.61, 0.43, 1);
 		else
 		end
@@ -1328,10 +1341,10 @@ end
 
 function PoliteWhisper_TestCustom(i)
 		local Text = _G["PoliteWhisper_Custom" .. i]:GetText();
-		
+
 		--Replace tags in the whisper with the actual content
 		Text = PoliteWhisper_ReplaceTags(Text,"$TestUser");
-		
+
 		DEFAULT_CHAT_FRAME:AddMessage(">>"..Text.."<<");
 end
 
@@ -1372,7 +1385,7 @@ function PoliteWhisper_Init()
 		PoliteWhisper_Custom8:SetText(PoliteWhisper_Options.PARTY_FULL);
 
 		PoliteWhisper_Loading = false;
-		
+
 		-- Configure according to options.
 		PoliteWhisper_SetOptions();
 end
@@ -1524,6 +1537,8 @@ function PoliteWhisper_PriestInit()  PoliteWhisper_ClassInit(PW_PRIEST);  end
 function PoliteWhisper_ShamanInit()  PoliteWhisper_ClassInit(PW_SHAMAN);  end
 function PoliteWhisper_WarriorInit() PoliteWhisper_ClassInit(PW_WARRIOR); end
 function PoliteWhisper_DeathknightInit() PoliteWhisper_ClassInit(PW_DEATHKNIGHT); end
+function PoliteWhisper_DemonHunterInit() PoliteWhisper_ClassInit(PW_DEMONHUNTER); end
+function PoliteWhisper_MonkInit() PoliteWhisper_ClassInit(PW_MONK); end
 
 -- Handles a change of specialization.
 function PoliteWhisper_OnClassDrop()
@@ -1618,7 +1633,7 @@ end
 function PoliteWhisper_SendAndLog(Text, User)
 		-- Did they specify a user?
 		if (not User) then User = PoliteWhisper_ChatUser; end
-		
+
 		--Replace tags in the whisper with the actual content
 		Text = PoliteWhisper_ReplaceTags(Text,User);
 
